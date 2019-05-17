@@ -1,3 +1,4 @@
+import 'package:app_gestao_loja/blocs/login_bloc.dart';
 import 'package:app_gestao_loja/widgets/input_field.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
@@ -8,6 +9,8 @@ class LoginScreen extends StatefulWidget {
 }
 
 class _LoginScreenState extends State<LoginScreen> {
+  final _loginBloc = LoginBloc();
+
   final Color colorPink600 = Colors.pink[600];
   @override
   Widget build(BuildContext context) {
@@ -32,28 +35,38 @@ class _LoginScreenState extends State<LoginScreen> {
                       icon: Icons.person,
                       hint: 'Usuário',
                       obscure: false,
+                      stream: _loginBloc.outEmail,
+                      onChanged: _loginBloc.changeEmail,
                     ),
                     InputField(
                       icon: Icons.lock,
                       hint: 'Senha',
                       obscure: true,
+                      stream: _loginBloc.outPassword,
+                      onChanged: _loginBloc.changePassword,
                     ),
                     SizedBox(
                       height: 20,
                     ),
-                    SizedBox(
-                      height: 50,
-                      child: RaisedButton(
-                        textColor: Colors.white,
-                        color: colorPink600,
-                        onPressed: () {},
-                        child: Text(
-                          'Entrar',
-                          style: TextStyle(
-                            fontSize: 16,
+                    StreamBuilder<bool>(
+                      stream: _loginBloc.outSubmitValed,
+                      builder: (context, snapshot) {
+                        return SizedBox(
+                          height: 50,
+                          child: RaisedButton(
+                            textColor: Colors.white,
+                            color: colorPink600,
+                            onPressed: snapshot.hasData ? () {} : null,
+                            child: Text(
+                              'Entrar',
+                              style: TextStyle(
+                                fontSize: 16,
+                              ),
+                            ),
+                            disabledColor: colorPink600.withAlpha(140),
                           ),
-                        ),
-                      ),
+                        );
+                      },
                     )
                   ],
                 ),
