@@ -56,7 +56,8 @@ class _LoginScreenState extends State<LoginScreen> {
                           child: RaisedButton(
                             textColor: Colors.white,
                             color: colorPink600,
-                            onPressed: snapshot.hasData ? () {} : null,
+                            onPressed:
+                                snapshot.hasData ? _loginBloc.submit : null,
                             child: Text(
                               'Entrar',
                               style: TextStyle(
