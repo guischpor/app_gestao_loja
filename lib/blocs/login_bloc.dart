@@ -1,5 +1,7 @@
+import 'dart:async';
 import 'package:app_gestao_loja/validators/login_validator.dart';
 import 'package:bloc_pattern/bloc_pattern.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:rxdart/rxdart.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
@@ -28,11 +30,18 @@ class LoginBloc extends BlocBase with LoginValidator {
   Function(String) get changeEmail => _emailController.sink.add;
   Function(String) get changePassword => _passwordController.sink.add;
 
+  StreamSubscription _streamSubscription;
+
   LoginBloc() {
-    FirebaseAuth.instance.onAuthStateChanged.listen((user) {
+    _streamSubscription =
+        FirebaseAuth.instance.onAuthStateChanged.listen((user) async {
       if (user != null) {
-        print('logou!');
-        FirebaseAuth.instance.signOut();
+        if (await verifyPrivileges(user)) {
+          _stateController.add(LoginState.SUCCESS);
+        } else {
+          FirebaseAuth.instance.signOut();
+          _stateController.add(LoginState.FAIL);
+        }
       } else {
         _stateController.add(LoginState.IDLE);
       }
@@ -54,10 +63,29 @@ class LoginBloc extends BlocBase with LoginValidator {
     });
   }
 
+  //função que verifica os previlégios do admin ou usuario
+  Future<bool> verifyPrivileges(FirebaseUser user) async {
+    return await Firestore.instance
+        .collection('admins')
+        .document(user.uid)
+        .get()
+        .then((doc) {
+      if (doc.data != null) {
+        return true;
+      } else {
+        return false;
+      }
+    }).catchError((e) {
+      return false;
+    });
+  }
+
   @override
   void dispose() {
     _emailController.close();
     _passwordController.close();
     _stateController.close();
+
+    _streamSubscription.cancel();
   }
 }

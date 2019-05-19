@@ -15,65 +15,85 @@ class _LoginScreenState extends State<LoginScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        backgroundColor: Colors.grey[850],
-        body: Stack(
-          alignment: Alignment.center,
-          children: <Widget>[
-            Container(),
-            SingleChildScrollView(
-              child: Container(
-                margin: EdgeInsets.all(16),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.stretch,
-                  children: <Widget>[
-                    Icon(
-                      Icons.store,
-                      size: 160,
-                      color: Colors.pink[600],
-                    ),
-                    InputField(
-                      icon: Icons.person,
-                      hint: 'Usuário',
-                      obscure: false,
-                      stream: _loginBloc.outEmail,
-                      onChanged: _loginBloc.changeEmail,
-                    ),
-                    InputField(
-                      icon: Icons.lock,
-                      hint: 'Senha',
-                      obscure: true,
-                      stream: _loginBloc.outPassword,
-                      onChanged: _loginBloc.changePassword,
-                    ),
-                    SizedBox(
-                      height: 20,
-                    ),
-                    StreamBuilder<bool>(
-                      stream: _loginBloc.outSubmitValed,
-                      builder: (context, snapshot) {
-                        return SizedBox(
-                          height: 50,
-                          child: RaisedButton(
-                            textColor: Colors.white,
-                            color: colorPink600,
-                            onPressed:
-                                snapshot.hasData ? _loginBloc.submit : null,
-                            child: Text(
-                              'Entrar',
-                              style: TextStyle(
-                                fontSize: 16,
-                              ),
-                            ),
-                            disabledColor: colorPink600.withAlpha(140),
-                          ),
-                        );
-                      },
-                    )
-                  ],
+      backgroundColor: Colors.grey[850],
+      body: StreamBuilder<LoginState>(
+        stream: _loginBloc.outState,
+        initialData: LoginState.LOADING,
+        builder: (contex, snapshot) {
+          print(snapshot.data);
+          switch (snapshot.data) {
+            case LoginState.LOADING:
+              return Center(
+                child: CircularProgressIndicator(
+                  valueColor: AlwaysStoppedAnimation<Color>(colorPink600),
                 ),
-              ),
-            ),
-          ],
-        ));
+              );
+            case LoginState.FAIL:
+            case LoginState.SUCCESS:
+            case LoginState.IDLE:
+              return Stack(
+                alignment: Alignment.center,
+                children: <Widget>[
+                  Container(),
+                  SingleChildScrollView(
+                    child: Container(
+                      margin: EdgeInsets.all(16),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.stretch,
+                        children: <Widget>[
+                          Icon(
+                            Icons.store,
+                            size: 160,
+                            color: colorPink600,
+                          ),
+                          InputField(
+                            icon: Icons.person,
+                            hint: 'Usuário',
+                            obscure: false,
+                            stream: _loginBloc.outEmail,
+                            onChanged: _loginBloc.changeEmail,
+                          ),
+                          InputField(
+                            icon: Icons.lock,
+                            hint: 'Senha',
+                            obscure: true,
+                            stream: _loginBloc.outPassword,
+                            onChanged: _loginBloc.changePassword,
+                          ),
+                          SizedBox(
+                            height: 20,
+                          ),
+                          StreamBuilder<bool>(
+                            stream: _loginBloc.outSubmitValed,
+                            builder: (context, snapshot) {
+                              return SizedBox(
+                                height: 50,
+                                child: RaisedButton(
+                                  textColor: Colors.white,
+                                  color: colorPink600,
+                                  onPressed: snapshot.hasData
+                                      ? _loginBloc.submit
+                                      : null,
+                                  child: Text(
+                                    'Entrar',
+                                    style: TextStyle(
+                                      fontSize: 16,
+                                    ),
+                                  ),
+                                  disabledColor: colorPink600.withAlpha(140),
+                                ),
+                              );
+                            },
+                          )
+                        ],
+                      ),
+                    ),
+                  ),
+                ],
+              );
+          }
+        },
+      ),
+    );
   }
 }
