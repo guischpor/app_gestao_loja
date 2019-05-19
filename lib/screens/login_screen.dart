@@ -1,7 +1,10 @@
 import 'package:app_gestao_loja/blocs/login_bloc.dart';
 import 'package:app_gestao_loja/widgets/input_field.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
+import 'home_screen.dart';
 
 class LoginScreen extends StatefulWidget {
   @override
@@ -12,6 +15,39 @@ class _LoginScreenState extends State<LoginScreen> {
   final _loginBloc = LoginBloc();
 
   final Color colorPink600 = Colors.pink[600];
+
+  @override
+  void initState() {
+    super.initState();
+    //verificara o estadi toda vez que a tela login for renderizada
+    _loginBloc.outState.listen((state) {
+      switch (state) {
+        case LoginState.SUCCESS:
+          Navigator.of(context).pushReplacement(MaterialPageRoute(
+            builder: (context) => HomeScreen(),
+          ));
+          break;
+        case LoginState.FAIL:
+          showDialog(
+              context: context,
+              builder: (context) => AlertDialog(
+                    title: Text('Erro'),
+                    content:
+                        Text('Você não possui os previlégios necessários!'),
+                  ));
+          break;
+        case LoginState.LOADING:
+        case LoginState.IDLE:
+      }
+    });
+  }
+
+  @override
+  void dispose() {
+    _loginBloc.dispose();
+    super.dispose();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -20,7 +56,6 @@ class _LoginScreenState extends State<LoginScreen> {
         stream: _loginBloc.outState,
         initialData: LoginState.LOADING,
         builder: (contex, snapshot) {
-          print(snapshot.data);
           switch (snapshot.data) {
             case LoginState.LOADING:
               return Center(
