@@ -56,7 +56,6 @@ class _HomeScreenState extends State<HomeScreen> {
               ),
             ),
           ],
-          //backgroundColor: colorPink600,
           onTap: (p) {
             _pageController.animateToPage(p,
                 duration: Duration(milliseconds: 500), curve: Curves.ease);
