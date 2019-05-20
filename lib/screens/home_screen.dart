@@ -1,4 +1,5 @@
 import 'package:app_gestao_loja/blocs/user_bloc.dart';
+import 'package:app_gestao_loja/tabs/orders.tab.dart';
 import 'package:app_gestao_loja/tabs/users_tab.dart';
 import 'package:flutter/material.dart';
 import 'package:bloc_pattern/bloc_pattern.dart';
@@ -81,9 +82,7 @@ class _HomeScreenState extends State<HomeScreen> {
             },
             children: <Widget>[
               UsersTab(),
-              Container(
-                color: Colors.yellowAccent,
-              ),
+              OrdersTab(),
               Container(
                 color: Colors.greenAccent,
               ),
