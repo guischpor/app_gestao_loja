@@ -25,6 +25,7 @@ class UsersTab extends StatelessWidget {
               border: InputBorder.none,
             ),
             style: TextStyle(color: Colors.white),
+            onChanged: _userBloc.onChangedSearch,
           ),
         ),
         Expanded(
