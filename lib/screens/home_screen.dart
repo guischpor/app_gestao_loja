@@ -1,4 +1,7 @@
+import 'package:app_gestao_loja/blocs/user_bloc.dart';
+import 'package:app_gestao_loja/tabs/users_tab.dart';
 import 'package:flutter/material.dart';
+import 'package:bloc_pattern/bloc_pattern.dart';
 
 class HomeScreen extends StatefulWidget {
   @override
@@ -9,12 +12,15 @@ class _HomeScreenState extends State<HomeScreen> {
   PageController _pageController;
   int _page = 0;
 
+  UserBloc _userBloc;
+
   final Color colorPink600 = Colors.pink[600];
 
   @override
   void initState() {
     super.initState();
     _pageController = PageController();
+    _userBloc = UserBloc();
   }
 
   @override
@@ -63,24 +69,27 @@ class _HomeScreenState extends State<HomeScreen> {
           currentIndex: _page,
         ),
       ),
-      body: PageView(
-        controller: _pageController,
-        onPageChanged: (p) {
-          setState(() {
-            _page = p;
-          });
-        },
-        children: <Widget>[
-          Container(
-            color: Colors.redAccent,
+      body: SafeArea(
+        child: BlocProvider<UserBloc>(
+          bloc: _userBloc,
+          child: PageView(
+            controller: _pageController,
+            onPageChanged: (p) {
+              setState(() {
+                _page = p;
+              });
+            },
+            children: <Widget>[
+              UsersTab(),
+              Container(
+                color: Colors.yellowAccent,
+              ),
+              Container(
+                color: Colors.greenAccent,
+              ),
+            ],
           ),
-          Container(
-            color: Colors.yellowAccent,
-          ),
-          Container(
-            color: Colors.greenAccent,
-          ),
-        ],
+        ),
       ),
     );
   }
