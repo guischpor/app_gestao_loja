@@ -1,5 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
 import 'order_header.dart';
 
 class OrderTile extends StatelessWidget {
@@ -21,6 +22,8 @@ class OrderTile extends StatelessWidget {
       margin: EdgeInsets.symmetric(horizontal: 16, vertical: 4),
       child: Card(
         child: ExpansionTile(
+          key: Key(order.documentID),
+          initiallyExpanded: order.data['status'] != 4,
           title: Text(
             "#${order.documentID.substring(order.documentID.length - 7, order.documentID.length)} - "
             "${states[order.data['status']]}",
@@ -40,7 +43,7 @@ class OrderTile extends StatelessWidget {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: <Widget>[
-                  OrderHeader(),
+                  OrderHeader(order),
                   Column(
                       mainAxisSize: MainAxisSize.min,
                       children: order.data['products'].map<Widget>((p) {
@@ -62,17 +65,38 @@ class OrderTile extends StatelessWidget {
                     children: <Widget>[
                       FlatButton(
                         textColor: Colors.red,
-                        onPressed: () {},
+                        onPressed: () {
+                          //deleta na lista de pedidos do usuario
+                          Firestore.instance
+                              .collection('users')
+                              .document(order['clientId'])
+                              .collection('orders')
+                              .document(order.documentID)
+                              .delete();
+
+                          //deleta na lista de pedidos
+                          order.reference.delete();
+                        },
                         child: Text('Excluir'),
                       ),
                       FlatButton(
                         textColor: Colors.grey[850],
-                        onPressed: () {},
+                        onPressed: order.data['status'] > 1
+                            ? () {
+                                order.reference.updateData(
+                                    {'status': order.data['status'] - 1});
+                              }
+                            : null,
                         child: Text('Regredir'),
                       ),
                       FlatButton(
                         textColor: Colors.green,
-                        onPressed: () {},
+                        onPressed: order.data['status'] < 4
+                            ? () {
+                                order.reference.updateData(
+                                    {'status': order.data['status'] + 1});
+                              }
+                            : null,
                         child: Text('Avançar'),
                       )
                     ],

@@ -89,6 +89,11 @@ class UserBloc extends BlocBase {
     });
   }
 
+  //função busca os dados do usuario pelo uid
+  Map<String, dynamic> getUser(String uid) {
+    return _users[uid];
+  }
+
   //função que apaga a lista caso vazia
   void _unsubscribeToOrders(String uid) {
     _users[uid]['subscription'].cancel();
