@@ -25,11 +25,11 @@ class OrdersBloc extends BlocBase {
             _orders.add(changes.document);
             break;
           case DocumentChangeType.modified:
-            _orders.retainWhere((order) => order.documentID == oid);
+            _orders.removeWhere((order) => order.documentID == oid);
             _orders.add((changes.document));
             break;
           case DocumentChangeType.removed:
-            _orders.retainWhere((order) => order.documentID == oid);
+            _orders.removeWhere((order) => order.documentID == oid);
             break;
         }
       });

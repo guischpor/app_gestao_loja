@@ -15,13 +15,13 @@ class OrdersTab extends StatelessWidget {
         child: StreamBuilder<List>(
           stream: _ordersBloc.outOrders,
           builder: (context, snapshot) {
-            if (!snapshot.hasData) {
+            if (!snapshot.hasData)
               return Center(
                 child: CircularProgressIndicator(
                   valueColor: AlwaysStoppedAnimation<Color>(colorPink600),
                 ),
               );
-            } else if (snapshot.data.length == 0) {
+            else if (snapshot.data.length == 0)
               return Center(
                 child: Text(
                   'Nenhum Pedido Encontrado',
@@ -30,7 +30,6 @@ class OrdersTab extends StatelessWidget {
                   ),
                 ),
               );
-            }
             return ListView.builder(
               itemCount: snapshot.data.length,
               itemBuilder: (context, index) {
