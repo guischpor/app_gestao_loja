@@ -1,3 +1,4 @@
+import 'package:app_gestao_loja/blocs/orders_bloc.dart';
 import 'package:app_gestao_loja/blocs/user_bloc.dart';
 import 'package:app_gestao_loja/tabs/orders.tab.dart';
 import 'package:app_gestao_loja/tabs/users_tab.dart';
@@ -14,6 +15,7 @@ class _HomeScreenState extends State<HomeScreen> {
   int _page = 0;
 
   UserBloc _userBloc;
+  OrdersBloc _ordersBloc;
 
   final Color colorPink600 = Colors.pink[600];
 
@@ -22,6 +24,7 @@ class _HomeScreenState extends State<HomeScreen> {
     super.initState();
     _pageController = PageController();
     _userBloc = UserBloc();
+    _ordersBloc = OrdersBloc();
   }
 
   @override
@@ -73,20 +76,23 @@ class _HomeScreenState extends State<HomeScreen> {
       body: SafeArea(
         child: BlocProvider<UserBloc>(
           bloc: _userBloc,
-          child: PageView(
-            controller: _pageController,
-            onPageChanged: (p) {
-              setState(() {
-                _page = p;
-              });
-            },
-            children: <Widget>[
-              UsersTab(),
-              OrdersTab(),
-              Container(
-                color: Colors.greenAccent,
-              ),
-            ],
+          child: BlocProvider<OrdersBloc>(
+            bloc: _ordersBloc,
+            child: PageView(
+              controller: _pageController,
+              onPageChanged: (p) {
+                setState(() {
+                  _page = p;
+                });
+              },
+              children: <Widget>[
+                UsersTab(),
+                OrdersTab(),
+                Container(
+                  color: Colors.greenAccent,
+                ),
+              ],
+            ),
           ),
         ),
       ),
