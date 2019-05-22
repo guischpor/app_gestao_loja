@@ -62,6 +62,7 @@ class ImagesWidget extends FormField<List> {
                                       onImageSelected: (image) {
                                         state
                                             .didChange(state.value..add(image));
+                                        Navigator.of(context).pop();
                                       },
                                     ),
                               );
