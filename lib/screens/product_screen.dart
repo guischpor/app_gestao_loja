@@ -2,29 +2,45 @@ import 'package:app_gestao_loja/blocs/product_bloc.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 
-class ProductScreen extends StatelessWidget {
+class ProductScreen extends StatefulWidget {
   final String categoryId;
   final DocumentSnapshot product;
 
+  ProductScreen({this.categoryId, this.product});
+
+  @override
+  _ProductScreenState createState() => _ProductScreenState(categoryId, product);
+}
+
+class _ProductScreenState extends State<ProductScreen> {
   final _formKey = GlobalKey<FormState>();
 
   final Color colorPink600 = Colors.pink[600];
+
   final Color colorGrey850 = Colors.grey[850];
 
   final ProductBloc _productBloc;
 
-  ProductScreen({this.categoryId, this.product})
+  _ProductScreenState(String categoryId, DocumentSnapshot product)
       : _productBloc = ProductBloc(categoryId: categoryId, product: product);
 
   @override
   Widget build(BuildContext context) {
+    final _fieldStyle = TextStyle(color: Colors.white, fontSize: 16);
+    InputDecoration _buildDecoration(String label) {
+      return InputDecoration(
+        labelText: label,
+        labelStyle: TextStyle(color: Colors.grey),
+      );
+    }
+
     return Scaffold(
       backgroundColor: colorGrey850,
       appBar: AppBar(
-        backgroundColor: colorGrey850,
+        backgroundColor: colorPink600,
         elevation: 0,
         title: Text('Criar Produto'),
-        centerTitle: true,
+        centerTitle: false,
         actions: <Widget>[
           IconButton(
             icon: Icon(Icons.remove),
@@ -36,13 +52,43 @@ class ProductScreen extends StatelessWidget {
           ),
         ],
       ),
-      body: Form(
-        key: _formKey,
-        child: ListView(
-          padding: EdgeInsets.all(16),
-          children: <Widget>[],
-        ),
-      ),
+      body: StreamBuilder<Map>(
+          stream: _productBloc.outData,
+          builder: (context, snapshot) {
+            if (!snapshot.hasData) return Container();
+            return Form(
+              key: _formKey,
+              child: ListView(
+                padding: EdgeInsets.all(16),
+                children: <Widget>[
+                  TextFormField(
+                    initialValue: snapshot.data['title'],
+                    style: _fieldStyle,
+                    decoration: _buildDecoration('Título'),
+                    onSaved: (t) {},
+                    validator: (t) {},
+                  ),
+                  TextFormField(
+                    initialValue: snapshot.data['description'],
+                    style: _fieldStyle,
+                    decoration: _buildDecoration('Descrição'),
+                    maxLines: 6,
+                    onSaved: (t) {},
+                    validator: (t) {},
+                  ),
+                  TextFormField(
+                    initialValue: snapshot.data['price']?.toStringAsFixed(2),
+                    style: _fieldStyle,
+                    decoration: _buildDecoration('Preço'),
+                    keyboardType:
+                        TextInputType.numberWithOptions(decimal: true),
+                    onSaved: (t) {},
+                    validator: (t) {},
+                  ),
+                ],
+              ),
+            );
+          }),
     );
   }
 }
