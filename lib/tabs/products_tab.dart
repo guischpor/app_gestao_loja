@@ -7,10 +7,13 @@ class ProductsTab extends StatefulWidget {
   _ProductsTabState createState() => _ProductsTabState();
 }
 
-class _ProductsTabState extends State<ProductsTab> {
+class _ProductsTabState extends State<ProductsTab>
+    with AutomaticKeepAliveClientMixin {
   final Color colorPink600 = Colors.pink[600];
+
   @override
   Widget build(BuildContext context) {
+    super.build(context);
     return FutureBuilder<QuerySnapshot>(
       future: Firestore.instance.collection('products').getDocuments(),
       builder: (context, snapshot) {
@@ -30,4 +33,7 @@ class _ProductsTabState extends State<ProductsTab> {
       },
     );
   }
+
+  @override
+  bool get wantKeepAlive => true;
 }
