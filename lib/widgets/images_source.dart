@@ -8,31 +8,71 @@ class ImageSourceSheet extends StatelessWidget {
 
   ImageSourceSheet({this.onImageSelected});
 
+  final Color colorPink600 = Colors.pink[600];
+
   @override
   Widget build(BuildContext context) {
     return BottomSheet(
-      onClosing: () {},
-      builder: (context) => Column(
-            children: <Widget>[
-              FlatButton(
-                child: Text('Câmera'),
-                onPressed: () async {
-                  File image =
-                      await ImagePicker.pickImage(source: ImageSource.camera);
-                  imageSelected(image);
-                },
+        onClosing: () {},
+        builder: (context) => Padding(
+              padding: EdgeInsets.all(16),
+              child: Row(
+                mainAxisSize: MainAxisSize.min,
+                mainAxisAlignment: MainAxisAlignment.spaceAround,
+                children: <Widget>[
+                  Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: <Widget>[
+                      FlatButton(
+                        child: Icon(
+                          Icons.camera,
+                          size: 80,
+                          color: colorPink600,
+                        ),
+                        onPressed: () async {
+                          File image = await ImagePicker.pickImage(
+                              source: ImageSource.camera);
+                          imageSelected(image);
+                        },
+                      ),
+                      Text(
+                        'Câmera',
+                        style: TextStyle(
+                          color: colorPink600,
+                          fontSize: 20,
+                          fontWeight: FontWeight.w500,
+                        ),
+                      ),
+                    ],
+                  ),
+                  Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: <Widget>[
+                      FlatButton(
+                        child: Icon(
+                          Icons.photo_library,
+                          size: 80,
+                          color: colorPink600,
+                        ),
+                        onPressed: () async {
+                          File image = await ImagePicker.pickImage(
+                              source: ImageSource.gallery);
+                          imageSelected(image);
+                        },
+                      ),
+                      Text(
+                        'Galeria',
+                        style: TextStyle(
+                          color: colorPink600,
+                          fontSize: 20,
+                          fontWeight: FontWeight.w500,
+                        ),
+                      ),
+                    ],
+                  ),
+                ],
               ),
-              FlatButton(
-                child: Text('Galeria'),
-                onPressed: () async {
-                  File image =
-                      await ImagePicker.pickImage(source: ImageSource.gallery);
-                  imageSelected(image);
-                },
-              ),
-            ],
-          ),
-    );
+            ));
   }
 
   void imageSelected(File image) async {
