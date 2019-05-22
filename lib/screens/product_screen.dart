@@ -1,4 +1,5 @@
 import 'package:app_gestao_loja/blocs/product_bloc.dart';
+import 'package:app_gestao_loja/widgets/images_widgets.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 
@@ -61,6 +62,19 @@ class _ProductScreenState extends State<ProductScreen> {
               child: ListView(
                 padding: EdgeInsets.all(16),
                 children: <Widget>[
+                  Text(
+                    'Imagens',
+                    style: TextStyle(
+                      color: Colors.grey,
+                      fontSize: 12,
+                    ),
+                  ),
+                  ImagesWidget(
+                    context: context,
+                    initialValue: snapshot.data['images'],
+                    onSaved: (l) {},
+                    validator: (l) {},
+                  ),
                   TextFormField(
                     initialValue: snapshot.data['title'],
                     style: _fieldStyle,
