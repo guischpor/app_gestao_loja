@@ -1,22 +1,14 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 
-class ProductScreen extends StatefulWidget {
-  @override
-  _ProductScreenState createState() => _ProductScreenState();
-}
+class ProductScreen extends StatelessWidget {
+  final String categoryId;
+  final DocumentSnapshot product;
 
-class _ProductScreenState extends State<ProductScreen> {
+  ProductScreen({this.categoryId, this.product});
+
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: Text('Adicionar Produtos'),
-        centerTitle: true,
-        backgroundColor: Colors.grey[850],
-        elevation: 0,
-      ),
-      backgroundColor: Colors.grey[850],
-      body: Container(),
-    );
+    return Container();
   }
 }

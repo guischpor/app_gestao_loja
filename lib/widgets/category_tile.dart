@@ -51,7 +51,10 @@ class CategoryTile extends StatelessWidget {
                           onTap: () {
                             Navigator.of(context).push(
                               MaterialPageRoute(
-                                builder: (context) => ProductScreen(),
+                                builder: (context) => ProductScreen(
+                                      categoryId: category.documentID,
+                                      product: doc,
+                                    ),
                               ),
                             );
                           },
@@ -76,7 +79,9 @@ class CategoryTile extends StatelessWidget {
                           onTap: () {
                             Navigator.of(context).push(
                               MaterialPageRoute(
-                                builder: (context) => ProductScreen(),
+                                builder: (context) => ProductScreen(
+                                      categoryId: category.documentID,
+                                    ),
                               ),
                             );
                           },
