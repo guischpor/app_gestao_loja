@@ -1,6 +1,7 @@
 import 'package:app_gestao_loja/blocs/product_bloc.dart';
 import 'package:app_gestao_loja/validators/product_validator.dart';
 import 'package:app_gestao_loja/widgets/images_widgets.dart';
+import 'package:app_gestao_loja/widgets/product_sizes.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 
@@ -62,10 +63,12 @@ class _ProductScreenState extends State<ProductScreen> with ProductValidator {
                       builder: (context, snapshot) {
                         return IconButton(
                           icon: Icon(Icons.remove),
-                          onPressed: snapshot.data ? null : () {
-                            _productBloc.deleteProduct();
-                            Navigator.of(context).pop();
-                          },
+                          onPressed: snapshot.data
+                              ? null
+                              : () {
+                                  _productBloc.deleteProduct();
+                                  Navigator.of(context).pop();
+                                },
                         );
                       });
                 else
@@ -131,6 +134,21 @@ class _ProductScreenState extends State<ProductScreen> with ProductValidator {
                         onSaved: _productBloc.savePrice,
                         validator: validatePrice,
                       ),
+                      SizedBox(
+                        height: 16,
+                      ),
+                      Text(
+                        'Tamanhos',
+                        style: TextStyle(
+                          color: Colors.grey,
+                          fontSize: 12,
+                        ),
+                      ),
+                      ProductSizes(
+                        initialValue: snapshot.data['sizes'],
+                        onSaved: (s) {},
+                        validator: (s) {},
+                      )
                     ],
                   ),
                 ),
