@@ -1,4 +1,5 @@
 import 'package:app_gestao_loja/blocs/product_bloc.dart';
+import 'package:app_gestao_loja/validators/product_validator.dart';
 import 'package:app_gestao_loja/widgets/images_widgets.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
@@ -13,8 +14,9 @@ class ProductScreen extends StatefulWidget {
   _ProductScreenState createState() => _ProductScreenState(categoryId, product);
 }
 
-class _ProductScreenState extends State<ProductScreen> {
+class _ProductScreenState extends State<ProductScreen> with ProductValidator {
   final _formKey = GlobalKey<FormState>();
+  final _scaffoldKey = GlobalKey<ScaffoldState>();
 
   final Color colorPink600 = Colors.pink[600];
 
@@ -36,6 +38,7 @@ class _ProductScreenState extends State<ProductScreen> {
     }
 
     return Scaffold(
+      key: _scaffoldKey,
       backgroundColor: colorGrey850,
       appBar: AppBar(
         backgroundColor: colorPink600,
@@ -47,62 +50,120 @@ class _ProductScreenState extends State<ProductScreen> {
             icon: Icon(Icons.remove),
             onPressed: () {},
           ),
-          IconButton(
-            icon: Icon(Icons.save),
-            onPressed: () {},
-          ),
+          StreamBuilder<bool>(
+              stream: _productBloc.outLoading,
+              initialData: false,
+              builder: (context, snapshot) {
+                return IconButton(
+                  icon: Icon(Icons.save),
+                  onPressed: snapshot.data ? null : saveProduct,
+                );
+              }),
         ],
       ),
       body: StreamBuilder<Map>(
           stream: _productBloc.outData,
           builder: (context, snapshot) {
             if (!snapshot.hasData) return Container();
-            return Form(
-              key: _formKey,
-              child: ListView(
-                padding: EdgeInsets.all(16),
-                children: <Widget>[
-                  Text(
-                    'Imagens',
-                    style: TextStyle(
-                      color: Colors.grey,
-                      fontSize: 12,
-                    ),
+            return Stack(
+              children: <Widget>[
+                Form(
+                  key: _formKey,
+                  child: ListView(
+                    padding: EdgeInsets.all(16),
+                    children: <Widget>[
+                      Text(
+                        'Imagens',
+                        style: TextStyle(
+                          color: Colors.grey,
+                          fontSize: 12,
+                        ),
+                      ),
+                      ImagesWidget(
+                        context: context,
+                        initialValue: snapshot.data['images'],
+                        onSaved: _productBloc.saveImages,
+                        validator: validateImages,
+                      ),
+                      TextFormField(
+                        initialValue: snapshot.data['title'],
+                        style: _fieldStyle,
+                        decoration: _buildDecoration('Título'),
+                        onSaved: _productBloc.saveTitle,
+                        validator: validateTitle,
+                      ),
+                      TextFormField(
+                        initialValue: snapshot.data['description'],
+                        style: _fieldStyle,
+                        decoration: _buildDecoration('Descrição'),
+                        maxLines: 6,
+                        onSaved: _productBloc.saveDescription,
+                        validator: validateDescription,
+                      ),
+                      TextFormField(
+                        initialValue:
+                            snapshot.data['price']?.toStringAsFixed(2),
+                        style: _fieldStyle,
+                        decoration: _buildDecoration('Preço'),
+                        keyboardType:
+                            TextInputType.numberWithOptions(decimal: true),
+                        onSaved: _productBloc.savePrice,
+                        validator: validatePrice,
+                      ),
+                    ],
                   ),
-                  ImagesWidget(
-                    context: context,
-                    initialValue: snapshot.data['images'],
-                    onSaved: (l) {},
-                    validator: (l) {},
-                  ),
-                  TextFormField(
-                    initialValue: snapshot.data['title'],
-                    style: _fieldStyle,
-                    decoration: _buildDecoration('Título'),
-                    onSaved: (t) {},
-                    validator: (t) {},
-                  ),
-                  TextFormField(
-                    initialValue: snapshot.data['description'],
-                    style: _fieldStyle,
-                    decoration: _buildDecoration('Descrição'),
-                    maxLines: 6,
-                    onSaved: (t) {},
-                    validator: (t) {},
-                  ),
-                  TextFormField(
-                    initialValue: snapshot.data['price']?.toStringAsFixed(2),
-                    style: _fieldStyle,
-                    decoration: _buildDecoration('Preço'),
-                    keyboardType:
-                        TextInputType.numberWithOptions(decimal: true),
-                    onSaved: (t) {},
-                    validator: (t) {},
-                  ),
-                ],
-              ),
+                ),
+                StreamBuilder<bool>(
+                    stream: _productBloc.outLoading,
+                    initialData: false,
+                    builder: (context, snapshot) {
+                      return IgnorePointer(
+                        ignoring: !snapshot.data,
+                        child: Container(
+                          color: snapshot.data
+                              ? Colors.black54
+                              : Colors.transparent,
+                        ),
+                      );
+                    }),
+              ],
             );
           }),
     );
+  }
+
+  //função salva produto no firebase
+  void saveProduct() async {
+    if (_formKey.currentState.validate()) {
+      _formKey.currentState.save();
+
+      //1 snackbar
+      _scaffoldKey.currentState.showSnackBar(
+        SnackBar(
+          content: Text(
+            'Salvando produto...',
+            style: TextStyle(color: Colors.white),
+          ),
+          duration: Duration(minutes: 1),
+          backgroundColor: colorPink600,
+        ),
+      );
+
+      bool success = await _productBloc.saveProduct();
+
+      //fechar a primeira snackbar
+      _scaffoldKey.currentState.removeCurrentSnackBar();
+
+      //2 snackbar
+      _scaffoldKey.currentState.showSnackBar(
+        SnackBar(
+          content: Text(
+            success ? 'Produto salvo!' : 'Erro ao salvar o produto!',
+            style: TextStyle(color: Colors.white),
+          ),
+          backgroundColor: colorPink600,
+        ),
+      );
+    }
   }
 }
