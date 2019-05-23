@@ -1,16 +1,20 @@
-# app_gestao_loja
+# App Gestão Loja Flutter
 
-A new Flutter project.
+App construído em Flutter.
+
+Em desenvolvimento
 
 ## Getting Started
 
-This project is a starting point for a Flutter application.
+Esse projeto é um modelo de gestão de loja Virtual construindo em Flutter e Bloc, usei como banco de dados o firestore.
 
-A few resources to get you started if this is your first Flutter project:
+Para utilizar e testat o app, use o usuário admin e a senha informados abaixo:
 
-- [Lab: Write your first Flutter app](https://flutter.dev/docs/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://flutter.dev/docs/cookbook)
+User: admin@admin.com
+pass: 123456
 
-For help getting started with Flutter, view our 
-[online documentation](https://flutter.dev/docs), which offers tutorials, 
-samples, guidance on mobile development, and a full API reference.
+- [Download da apk - App Gestão Loja Flutter](https://drive.google.com/file/d/1LUVL7VcIFe2Rw5S1Y5coQ4pLPwHfwY6I/view?usp=sharing)
+
+### Imagens do App Gestão Loja Flutter
+
+![Alt Text](https://firebasestorage.googleapis.com/v0/b/projetoflutter-d9c64.appspot.com/o/App%20Gest%C3%A3o%20Loja%20Flutter.jpg?alt=media&token=34c8f98d-86a3-4874-9c8d-fd4531f097ff)
