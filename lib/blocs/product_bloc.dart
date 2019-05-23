@@ -13,7 +13,7 @@ class ProductBloc extends BlocBase {
   String categoryId;
   DocumentSnapshot product;
 
-  Map<dynamic, dynamic> unsavedData;
+  Map<String, dynamic> unsavedData;
 
   ProductBloc({this.categoryId, this.product}) {
     //nesse if caso eu clique em um produto existente ele mostrara todos os dados do produto escolhido
