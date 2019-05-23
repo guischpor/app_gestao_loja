@@ -1,4 +1,5 @@
 import 'package:app_gestao_loja/screens/product_screen.dart';
+import 'package:app_gestao_loja/widgets/edit_category_dialog.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 
@@ -15,10 +16,18 @@ class CategoryTile extends StatelessWidget {
       margin: EdgeInsets.symmetric(horizontal: 16, vertical: 4),
       child: Card(
         child: ExpansionTile(
-          leading: CircleAvatar(
-            backgroundColor: Colors.transparent,
-            backgroundImage: NetworkImage(
-              category.data['icon'],
+          leading: GestureDetector(
+            onTap: () {
+              showDialog(
+                context: context,
+                builder: (context) => EditCategoryDialog(),
+              );
+            },
+            child: CircleAvatar(
+              backgroundColor: Colors.transparent,
+              backgroundImage: NetworkImage(
+                category.data['icon'],
+              ),
             ),
           ),
           title: Text(
