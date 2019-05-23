@@ -3,6 +3,7 @@ import 'package:app_gestao_loja/blocs/user_bloc.dart';
 import 'package:app_gestao_loja/tabs/orders.tab.dart';
 import 'package:app_gestao_loja/tabs/products_tab.dart';
 import 'package:app_gestao_loja/tabs/users_tab.dart';
+import 'package:app_gestao_loja/widgets/edit_category_dialog.dart';
 import 'package:flutter/material.dart';
 import 'package:bloc_pattern/bloc_pattern.dart';
 import 'package:flutter_speed_dial/flutter_speed_dial.dart';
@@ -137,6 +138,19 @@ class _HomeScreenState extends State<HomeScreen> {
               },
             ),
           ],
+        );
+      case 2:
+        return FloatingActionButton(
+          backgroundColor: colorPink600,
+          child: Icon(
+            Icons.add,
+          ),
+          onPressed: () {
+            showDialog(
+              context: context,
+              builder: (context) => EditCategoryDialog(),
+            );
+          },
         );
     }
   }
