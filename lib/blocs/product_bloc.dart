@@ -1,5 +1,6 @@
 import 'package:bloc_pattern/bloc_pattern.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:rxdart/subjects.dart';
 
 class ProductBloc extends BlocBase {
@@ -55,11 +56,59 @@ class ProductBloc extends BlocBase {
     //está carregando
     _loadingController.add(true);
 
-    await Future.delayed(Duration(seconds: 3));
+    try {
+      if (product != null) {
+        //função responsavel por realizar o upload das imagens
+        await _uploadImages(product.documentID);
 
-    //não esta carregando
-    _loadingController.add(false);
-    return true;
+        //pegar o produto com as referencias e dar um update com os dados não salvos
+        await product.reference.updateData(unsavedData);
+      } else {
+        //cria o produto, e remove as imagens
+        DocumentReference dr = await Firestore.instance
+            .collection('products')
+            .document(categoryId)
+            .collection('items')
+            .add(Map.from(unsavedData)..remove('images'));
+        //e logo em seguida adiciona as imagens de forma mais correta
+        await _uploadImages(dr.documentID);
+        //e realiza um update com as imagens corretas
+        await dr.updateData(unsavedData);
+      }
+
+      //não esta carregando
+      _loadingController.add(false);
+
+      //se tudo ocorreu bem
+      return true;
+    } catch (e) {
+      //não esta carregando
+      _loadingController.add(false);
+      return false;
+    }
+  }
+
+  Future _uploadImages(String productId) async {
+    for (int i = 0; i < unsavedData['images'].length; i++) {
+      if (unsavedData['images'][i] is String) continue;
+
+      //função do firebase para upload de arquivo
+      StorageUploadTask uploadTask = FirebaseStorage.instance
+          .ref()
+          .child(categoryId)
+          .child(productId)
+          .child(DateTime.now().millisecondsSinceEpoch.toString())
+          .putFile(unsavedData['images'][i]);
+
+      //nesse ponto ele vai esperar o upload ser completo
+      StorageTaskSnapshot s = await uploadTask.onComplete;
+
+      //recuperando a url da imagem
+      String downloadUrl = await s.ref.getDownloadURL();
+
+      //recuperado a url, agora o unsabedData recebe a url
+      unsavedData['images'][i] = downloadUrl;
+    }
   }
 
   @override
